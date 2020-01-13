@@ -1,0 +1,169 @@
+CCS PCM C Compiler, Version 4.088, 5967               11-jul-16 09:49
+
+               Filename: C:\Users\Administrator\Desktop\Ignasi i Bernat i Andreu\template_rda.lst
+
+               ROM used: 145 words (2%)
+                         Largest free fragment is 2048
+               RAM used: 16 (4%) at main() level
+                         17 (5%) worst case
+               Stack:    2 worst case (1 in main + 1 for interrupts)
+
+*
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   069
+0003:  NOP
+0004:  MOVWF  7F
+0005:  SWAPF  03,W
+0006:  CLRF   03
+0007:  MOVWF  21
+0008:  MOVF   0A,W
+0009:  MOVWF  20
+000A:  CLRF   0A
+000B:  MOVF   04,W
+000C:  MOVWF  22
+000D:  MOVF   77,W
+000E:  MOVWF  23
+000F:  MOVF   78,W
+0010:  MOVWF  24
+0011:  MOVF   79,W
+0012:  MOVWF  25
+0013:  MOVF   7A,W
+0014:  MOVWF  26
+0015:  MOVF   7B,W
+0016:  MOVWF  27
+0017:  BCF    03.7
+0018:  BCF    03.5
+0019:  MOVLW  8C
+001A:  MOVWF  04
+001B:  BTFSS  00.5
+001C:  GOTO   01F
+001D:  BTFSC  0C.5
+001E:  GOTO   032
+001F:  MOVF   22,W
+0020:  MOVWF  04
+0021:  MOVF   23,W
+0022:  MOVWF  77
+0023:  MOVF   24,W
+0024:  MOVWF  78
+0025:  MOVF   25,W
+0026:  MOVWF  79
+0027:  MOVF   26,W
+0028:  MOVWF  7A
+0029:  MOVF   27,W
+002A:  MOVWF  7B
+002B:  MOVF   20,W
+002C:  MOVWF  0A
+002D:  SWAPF  21,W
+002E:  MOVWF  03
+002F:  SWAPF  7F,F
+0030:  SWAPF  7F,W
+0031:  RETFIE
+0032:  BCF    0A.3
+0033:  BCF    0A.4
+0034:  GOTO   053
+.................... #include <16f877.h> // Selecciona el PIC 
+.................... //////// Standard Header file for the PIC16F877 device //////////////// 
+.................... #device PIC16F877 
+.................... #list 
+....................  
+.................... #fuses XT,NOWDT,NOPROTECT,NOLVP,PUT,BROWNOUT // Opciones de configuración 
+.................... #use delay(clock=20000000) 
+.................... #use rs232(baud=9600, xmit=PIN_C6, rcv=PIN_C7) // Definición del RS232 
+....................  
+.................... char Keypress=' '; 
+*
+007A:  MOVLW  20
+007B:  BCF    03.5
+007C:  MOVWF  28
+....................  
+.................... #int_rda 
+.................... void serial_isr() { 
+....................  
+....................   Keypress=0x00; 
+*
+0053:  CLRF   28
+....................   if(kbhit()){ 
+0054:  BTFSS  0C.5
+0055:  GOTO   065
+....................     Keypress=getc(); 
+0056:  BTFSS  0C.5
+0057:  GOTO   056
+0058:  MOVF   1A,W
+0059:  MOVWF  28
+....................     if(Keypress!=0x00){ 
+005A:  MOVF   28,F
+005B:  BTFSC  03.2
+005C:  GOTO   065
+....................       putchar(keypress+1); 
+005D:  MOVLW  01
+005E:  ADDWF  28,W
+005F:  MOVWF  2A
+0060:  MOVF   2A,W
+0061:  BTFSS  0C.4
+0062:  GOTO   061
+0063:  MOVWF  19
+....................       keypress=0x00; 
+0064:  CLRF   28
+....................     } 
+....................   } 
+.................... } 
+....................  
+....................  
+0065:  BCF    0C.5
+0066:  BCF    0A.3
+0067:  BCF    0A.4
+0068:  GOTO   01F
+.................... void main() { 
+0069:  CLRF   04
+006A:  BCF    03.7
+006B:  MOVLW  1F
+006C:  ANDWF  03,F
+006D:  MOVLW  81
+006E:  BSF    03.5
+006F:  MOVWF  19
+0070:  MOVLW  A6
+0071:  MOVWF  18
+0072:  MOVLW  90
+0073:  BCF    03.5
+0074:  MOVWF  18
+0075:  BSF    03.5
+0076:  BSF    1F.0
+0077:  BSF    1F.1
+0078:  BSF    1F.2
+0079:  BCF    1F.3
+....................  
+....................   enable_interrupts(global); 
+*
+007D:  MOVLW  C0
+007E:  IORWF  0B,F
+....................   enable_interrupts(int_rda); 
+007F:  BSF    03.5
+0080:  BSF    0C.5
+....................  
+....................   printf("\r\n\Listen on RS232 (Int)\r\n"); 
+0081:  BCF    03.5
+0082:  CLRF   29
+0083:  MOVF   29,W
+0084:  CALL   035
+0085:  INCF   29,F
+0086:  MOVWF  77
+0087:  MOVF   77,W
+0088:  BTFSS  0C.4
+0089:  GOTO   088
+008A:  MOVWF  19
+008B:  MOVLW  19
+008C:  SUBWF  29,W
+008D:  BTFSS  03.2
+008E:  GOTO   083
+....................  
+....................   do { 
+....................  
+....................  
+....................   } while (TRUE); 
+.................... } 
+008F:  GOTO   08F
+0090:  SLEEP
+
+Configuration Fuses:
+   Word  1: 3F71   XT NOWDT PUT NOPROTECT BROWNOUT NOLVP NOCPD NOWRT NODEBUG

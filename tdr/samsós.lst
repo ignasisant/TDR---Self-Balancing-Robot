@@ -1,0 +1,238 @@
+CCS PCM C Compiler, Version 4.088, 5967               15-jul-16 09:12
+
+               Filename: C:\Users\Administrator\Desktop\Ignasi i Bernat i Andreu\samsós.lst
+
+               ROM used: 267 words (3%)
+                         Largest free fragment is 2048
+               RAM used: 6 (2%) at main() level
+                         14 (4%) worst case
+               Stack:    3 locations
+
+*
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   0EA
+0003:  NOP
+....................  
+.................... #include <16F877.h> 
+.................... //////// Standard Header file for the PIC16F877 device //////////////// 
+.................... #device PIC16F877 
+.................... #list 
+....................  
+.................... #fuses HS,NOWDT,NOPROTECT,NOLVP 
+.................... #use delay(clock=20000000) 
+*
+001D:  MOVLW  24
+001E:  MOVWF  04
+001F:  BCF    03.7
+0020:  MOVF   00,W
+0021:  BTFSC  03.2
+0022:  GOTO   030
+0023:  MOVLW  06
+0024:  MOVWF  78
+0025:  CLRF   77
+0026:  DECFSZ 77,F
+0027:  GOTO   026
+0028:  DECFSZ 78,F
+0029:  GOTO   025
+002A:  MOVLW  7B
+002B:  MOVWF  77
+002C:  DECFSZ 77,F
+002D:  GOTO   02C
+002E:  DECFSZ 00,F
+002F:  GOTO   023
+0030:  RETLW  00
+.................... #use rs232(baud=9600, xmit=PIN_C6, rcv=PIN_C7)  // Definicion del RS232 
+....................  
+....................  
+.................... void linia(){ //funcio per poder llegir els sensors de linia 
+....................    int esquerra, dreta, central;  
+....................    set_adc_channel(5); 
+*
+007E:  MOVLW  28
+007F:  MOVWF  78
+0080:  MOVF   1F,W
+0081:  ANDLW  C7
+0082:  IORWF  78,W
+0083:  MOVWF  1F
+....................    delay_ms(1); 
+0084:  MOVLW  01
+0085:  MOVWF  24
+0086:  CALL   01D
+....................    dreta = read_adc(); 
+0087:  BSF    1F.2
+0088:  BTFSC  1F.2
+0089:  GOTO   088
+008A:  MOVF   1E,W
+008B:  MOVWF  22
+....................     
+....................    set_adc_channel(6); 
+008C:  MOVLW  30
+008D:  MOVWF  78
+008E:  MOVF   1F,W
+008F:  ANDLW  C7
+0090:  IORWF  78,W
+0091:  MOVWF  1F
+....................    delay_ms(1); 
+0092:  MOVLW  01
+0093:  MOVWF  24
+0094:  CALL   01D
+....................    central = read_adc(); 
+0095:  BSF    1F.2
+0096:  BTFSC  1F.2
+0097:  GOTO   096
+0098:  MOVF   1E,W
+0099:  MOVWF  23
+....................     
+....................    set_adc_channel(7); 
+009A:  MOVLW  38
+009B:  MOVWF  78
+009C:  MOVF   1F,W
+009D:  ANDLW  C7
+009E:  IORWF  78,W
+009F:  MOVWF  1F
+....................    delay_ms(1); 
+00A0:  MOVLW  01
+00A1:  MOVWF  24
+00A2:  CALL   01D
+....................    esquerra = read_adc(); 
+00A3:  BSF    1F.2
+00A4:  BTFSC  1F.2
+00A5:  GOTO   0A4
+00A6:  MOVF   1E,W
+00A7:  MOVWF  21
+....................     
+....................    delay_ms(100); 
+00A8:  MOVLW  64
+00A9:  MOVWF  24
+00AA:  CALL   01D
+....................      printf("Linia:%u - %u - %u\n\r",dreta, central, esquerra); 
+00AB:  CLRF   24
+00AC:  MOVF   24,W
+00AD:  CALL   004
+00AE:  INCF   24,F
+00AF:  MOVWF  77
+00B0:  MOVF   77,W
+00B1:  BTFSS  0C.4
+00B2:  GOTO   0B1
+00B3:  MOVWF  19
+00B4:  MOVLW  06
+00B5:  SUBWF  24,W
+00B6:  BTFSS  03.2
+00B7:  GOTO   0AC
+00B8:  MOVF   22,W
+00B9:  MOVWF  24
+00BA:  MOVLW  1B
+00BB:  MOVWF  25
+00BC:  CALL   046
+00BD:  MOVLW  20
+00BE:  BTFSS  0C.4
+00BF:  GOTO   0BE
+00C0:  MOVWF  19
+00C1:  MOVLW  2D
+00C2:  BTFSS  0C.4
+00C3:  GOTO   0C2
+00C4:  MOVWF  19
+00C5:  MOVLW  20
+00C6:  BTFSS  0C.4
+00C7:  GOTO   0C6
+00C8:  MOVWF  19
+00C9:  MOVF   23,W
+00CA:  MOVWF  24
+00CB:  MOVLW  1B
+00CC:  MOVWF  25
+00CD:  CALL   046
+00CE:  MOVLW  20
+00CF:  BTFSS  0C.4
+00D0:  GOTO   0CF
+00D1:  MOVWF  19
+00D2:  MOVLW  2D
+00D3:  BTFSS  0C.4
+00D4:  GOTO   0D3
+00D5:  MOVWF  19
+00D6:  MOVLW  20
+00D7:  BTFSS  0C.4
+00D8:  GOTO   0D7
+00D9:  MOVWF  19
+00DA:  MOVF   21,W
+00DB:  MOVWF  24
+00DC:  MOVLW  1B
+00DD:  MOVWF  25
+00DE:  CALL   046
+00DF:  MOVLW  0A
+00E0:  BTFSS  0C.4
+00E1:  GOTO   0E0
+00E2:  MOVWF  19
+00E3:  MOVLW  0D
+00E4:  BTFSS  0C.4
+00E5:  GOTO   0E4
+00E6:  MOVWF  19
+.................... } 
+00E7:  BCF    0A.3
+00E8:  BCF    0A.4
+00E9:  GOTO   109 (RETURN)
+.................... void ulls(){ //funcio per poder llegir els sensor sharp 
+....................    int esquerra, dreta; 
+....................    set_adc_channel(2); //activem la sortida que volem llegir  
+....................    delay_ms(1); 
+....................    dreta = read_adc(); //llegim el valor  
+....................     
+....................    set_adc_channel(3); //activem l'altre sortida   
+....................    delay_ms(1); 
+....................    esquerra = read_adc(); //llegim el valor 
+....................  
+....................    delay_ms(100); 
+....................    printf("Ulls:%u - %u\n\r",dreta, esquerra); 
+....................     
+.................... } 
+....................     
+....................  
+.................... void main(){ 
+00EA:  CLRF   04
+00EB:  BCF    03.7
+00EC:  MOVLW  1F
+00ED:  ANDWF  03,F
+00EE:  MOVLW  81
+00EF:  BSF    03.5
+00F0:  MOVWF  19
+00F1:  MOVLW  A6
+00F2:  MOVWF  18
+00F3:  MOVLW  90
+00F4:  BCF    03.5
+00F5:  MOVWF  18
+00F6:  BSF    03.5
+00F7:  BSF    1F.0
+00F8:  BSF    1F.1
+00F9:  BSF    1F.2
+00FA:  BCF    1F.3
+....................  
+....................     
+....................    setup_adc(ADC_CLOCK_INTERNAL); //activem el clock intern 
+00FB:  BCF    03.5
+00FC:  BSF    1F.6
+00FD:  BSF    1F.7
+00FE:  BSF    03.5
+00FF:  BCF    1F.7
+0100:  BCF    03.5
+0101:  BSF    1F.0
+....................    setup_adc_ports(ALL_ANALOG); //activem tots els pins analogics  
+0102:  BSF    03.5
+0103:  BCF    1F.0
+0104:  BCF    1F.1
+0105:  BCF    1F.2
+0106:  BCF    1F.3
+....................     
+....................     
+....................  
+.................... while(1){ 
+....................    //ulls(); 
+....................    linia(); 
+0107:  BCF    03.5
+0108:  GOTO   07E
+.................... } 
+0109:  GOTO   108
+.................... } 
+010A:  SLEEP
+
+Configuration Fuses:
+   Word  1: 3F72   HS NOWDT PUT NOPROTECT BROWNOUT NOLVP NOCPD NOWRT NODEBUG

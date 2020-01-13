@@ -1,0 +1,50 @@
+
+ROM used: 607 (7%)
+          607 (7%) including unused fragments
+
+          1 Average locations per line
+          4 Average locations per statement
+
+RAM used: 22 (6%) at main() level
+          23 (6%) worst case
+
+Stack used: 3 worst case (out of 8 total available)
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  256   142 100  sumo.c
+  282     0   0  ..\..\..\..\Program Files (x86)\PICC\devices\16F877.h
+----- -----
+  538   142 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     20   3   1             @delay_ms1
+0    246  41   0  2194  3.9  isr_timer1
+0     72  12   0   483  3.3  linia
+0     50   8   0   308  3.3  ulls
+0    166  27   1  1437  5.4  MAIN
+
+Program metrics:
+    Functions               4
+    Statements              142
+    Comments                108
+    Volume (V)              5598
+    Difficilty (D)          16.0
+    Effort to implement (E) 89454
+    Time to implement (T)   1 hours, 23 minutes
+    Est Delivered Bugs (B)  1
+    Cyclomatic Complexity   29
+    Maintainability (MI)    123
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00003     4  0  
+00004-00034    49  0  
+00035-007FF   554  1441  
+00800-00FFF     0  2048  
+01000-017FF     0  2048  
+01800-01FFF     0  2048  
+
+
+

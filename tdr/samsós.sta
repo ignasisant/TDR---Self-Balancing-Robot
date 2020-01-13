@@ -1,0 +1,50 @@
+
+ROM used: 267 (3%)
+          267 (3%) including unused fragments
+
+          1 Average locations per line
+          11 Average locations per statement
+
+RAM used: 6 (2%) at main() level
+          14 (4%) worst case
+
+Stack used: 3 worst case (out of 8 total available)
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+   54    24 100  samsós.c
+  282     0   0  ..\..\..\..\Program Files (x86)\PICC\devices\16F877.h
+----- -----
+  336    24 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     20   7   1             @delay_ms1
+0    108  40   4   323  2.3  linia
+0     25   9   0             @const61
+0     21   8   3             @DIV88
+0     56  21   2             @PRINTF_U_9600_62_63
+0     33  12   0    61  1.5  MAIN
+
+Program metrics:
+    Functions               2
+    Statements              24
+    Comments                77
+    Volume (V)              453
+    Difficilty (D)          3.6
+    Effort to implement (E) 1620
+    Time to implement (T)   1 minutes
+    Est Delivered Bugs (B)  0
+    Cyclomatic Complexity   1
+    Maintainability (MI)    93
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00003     4  0  
+00004-007FF   263  1781  
+00800-00FFF     0  2048  
+01000-017FF     0  2048  
+01800-01FFF     0  2048  
+
+
+

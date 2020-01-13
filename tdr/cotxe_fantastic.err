@@ -1,0 +1,4 @@
+>>> Warning 203 "cotxe_fantastic.c" Line 15(1,1): Condition always TRUE
+>>> Warning 202 "cotxe_fantastic.c" Line 8(6,7): Variable never used:   x
+      Memory usage:   ROM=1%      RAM=2% - 2%
+      0 Errors,  2 Warnings.

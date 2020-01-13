@@ -1,0 +1,201 @@
+CCS PCM C Compiler, Version 4.088, 5967               11-jul-16 12:15
+
+               Filename: C:\Users\Administrator\Desktop\Ignasi i Bernat i Andreu\template_rtcc.lst
+
+               ROM used: 155 words (2%)
+                         Largest free fragment is 2048
+               RAM used: 19 (5%) at main() level
+                         19 (5%) worst case
+               Stack:    2 worst case (1 in main + 1 for interrupts)
+
+*
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   065
+0003:  NOP
+0004:  MOVWF  7F
+0005:  SWAPF  03,W
+0006:  CLRF   03
+0007:  MOVWF  21
+0008:  MOVF   0A,W
+0009:  MOVWF  20
+000A:  CLRF   0A
+000B:  MOVF   04,W
+000C:  MOVWF  22
+000D:  MOVF   77,W
+000E:  MOVWF  23
+000F:  MOVF   78,W
+0010:  MOVWF  24
+0011:  MOVF   79,W
+0012:  MOVWF  25
+0013:  MOVF   7A,W
+0014:  MOVWF  26
+0015:  MOVF   7B,W
+0016:  MOVWF  27
+0017:  BCF    03.7
+0018:  BCF    03.5
+0019:  BTFSS  0B.5
+001A:  GOTO   01D
+001B:  BTFSC  0B.2
+001C:  GOTO   030
+001D:  MOVF   22,W
+001E:  MOVWF  04
+001F:  MOVF   23,W
+0020:  MOVWF  77
+0021:  MOVF   24,W
+0022:  MOVWF  78
+0023:  MOVF   25,W
+0024:  MOVWF  79
+0025:  MOVF   26,W
+0026:  MOVWF  7A
+0027:  MOVF   27,W
+0028:  MOVWF  7B
+0029:  MOVF   20,W
+002A:  MOVWF  0A
+002B:  SWAPF  21,W
+002C:  MOVWF  03
+002D:  SWAPF  7F,F
+002E:  SWAPF  7F,W
+002F:  RETFIE
+0030:  BCF    0A.3
+0031:  BCF    0A.4
+0032:  GOTO   04E
+.................... #include <16f877.h>                    // Selecciona el PIC 
+.................... //////// Standard Header file for the PIC16F877 device //////////////// 
+.................... #device PIC16F877 
+.................... #list 
+....................  
+.................... #fuses XT,NOWDT,NOPROTECT,PUT,BROWNOUT // Opciones de configuración 
+.................... #use delay(clock=20000000)              // Velocidad del Cristal : 4 Mhz 
+.................... #use rs232(baud=9600, xmit=PIN_C6, rcv=PIN_C7) // Definición del RS232 
+....................  
+.................... byte const NInts=30;                   // Numero de interrupciones para 1 Segundo (CALCULADLO)!!!!!!!! 
+....................  
+.................... // VARIABLES GLOBALES 
+....................  
+.................... int16 C_Ints=0;                         // Contador de Interrupciones ocurridas 
+*
+0076:  BCF    03.5
+0077:  CLRF   28
+0078:  CLRF   29
+.................... char Flag=0;                           // Flag que cambia cada NInts interrupciones 
+0079:  CLRF   2A
+....................  
+....................  
+.................... #int_RTCC                              // Interrupción por desbordamiento 
+.................... void RTCC_isr() {                           // del TIMER0 RTCC 
+....................  
+....................   if(C_Ints > NInts){                  // Si las ints ocurridas > ints para 1 Seg. 
+*
+004E:  MOVF   29,F
+004F:  BTFSS  03.2
+0050:  GOTO   055
+0051:  MOVF   28,W
+0052:  SUBLW  1E
+0053:  BTFSC  03.0
+0054:  GOTO   05E
+....................  
+....................     if(Flag==0){ 
+0055:  MOVF   2A,F
+0056:  BTFSS  03.2
+0057:  GOTO   05B
+....................       Flag=1; 
+0058:  MOVLW  01
+0059:  MOVWF  2A
+....................     } 
+....................     else{ 
+005A:  GOTO   05C
+....................       Flag=0; 
+005B:  CLRF   2A
+....................     } 
+....................     C_Ints=0;                          // Reinicializo Contador de Ints 
+005C:  CLRF   29
+005D:  CLRF   28
+....................   } 
+....................   ++C_Ints;                            // Incremento el número de interrupciones 
+005E:  INCF   28,F
+005F:  BTFSC  03.2
+0060:  INCF   29,F
+.................... }                                      // Ocurridas 
+....................  
+....................  
+....................  
+0061:  BCF    0B.2
+0062:  BCF    0A.3
+0063:  BCF    0A.4
+0064:  GOTO   01D
+.................... void main(void) { 
+0065:  CLRF   04
+0066:  BCF    03.7
+0067:  MOVLW  1F
+0068:  ANDWF  03,F
+0069:  MOVLW  81
+006A:  BSF    03.5
+006B:  MOVWF  19
+006C:  MOVLW  A6
+006D:  MOVWF  18
+006E:  MOVLW  90
+006F:  BCF    03.5
+0070:  MOVWF  18
+0071:  BSF    03.5
+0072:  BSF    1F.0
+0073:  BSF    1F.1
+0074:  BSF    1F.2
+0075:  BCF    1F.3
+....................   char K; 
+....................   K=Flag; 
+*
+007A:  MOVF   2A,W
+007B:  MOVWF  2B
+....................   setup_counters(RTCC_INTERNAL,RTCC_DIV_128);// TIMER0: Clock Interno, Presescaler 128 
+007C:  BSF    03.5
+007D:  MOVF   01,W
+007E:  ANDLW  C0
+007F:  IORLW  06
+0080:  MOVWF  01
+0081:  CLRWDT
+....................   enable_interrupts(INT_RTCC);               // Habilito Interrupción RTCC 
+0082:  BCF    03.5
+0083:  BSF    0B.5
+....................   enable_interrupts(global);                 // Habilito Interrupciones 
+0084:  MOVLW  C0
+0085:  IORWF  0B,F
+....................  
+....................  
+....................  
+....................   do{ // Bucle infinito 
+....................  
+....................     if(Flag==K){} 
+0086:  MOVF   2B,W
+0087:  SUBWF  2A,W
+0088:  BTFSC  03.2
+....................     else 
+0089:  GOTO   099
+....................     {                                        // si ha cambiado Flag ... 
+....................  
+....................       printf("Ha pasado un segundo\n\r"); 
+008A:  CLRF   2C
+008B:  MOVF   2C,W
+008C:  CALL   033
+008D:  INCF   2C,F
+008E:  MOVWF  77
+008F:  MOVF   77,W
+0090:  BTFSS  0C.4
+0091:  GOTO   090
+0092:  MOVWF  19
+0093:  MOVLW  16
+0094:  SUBWF  2C,W
+0095:  BTFSS  03.2
+0096:  GOTO   08B
+....................       K=Flag;                                // Guardo estado anterior de Flag 
+0097:  MOVF   2A,W
+0098:  MOVWF  2B
+....................     } 
+....................  
+....................   }While(TRUE); 
+.................... } 
+0099:  GOTO   086
+009A:  SLEEP
+
+Configuration Fuses:
+   Word  1: 3F71   XT NOWDT PUT NOPROTECT BROWNOUT NOLVP NOCPD NOWRT NODEBUG

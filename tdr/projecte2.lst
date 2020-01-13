@@ -1,0 +1,104 @@
+CCS PCM C Compiler, Version 4.088, 5967               04-jul-16 11:07
+
+               Filename: C:\Users\Administrator\Desktop\Ignasi i Bernat i Andreu\projecte2.lst
+
+               ROM used: 58 words (1%)
+                         Largest free fragment is 2048
+               RAM used: 9 (2%) at main() level
+                         9 (2%) worst case
+               Stack:    0 locations
+
+*
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   004
+0003:  NOP
+.................... #include <16F877.h> 
+.................... //////// Standard Header file for the PIC16F877 device //////////////// 
+.................... #device PIC16F877 
+.................... #list 
+....................  
+.................... #fuses HS,NOWDT,NOPROTECT,NOLVP 
+.................... #use delay(clock=4000000) 
+....................  
+.................... #define DELAY_COUNTER_VALUE    100 
+....................  
+.................... void main(void) 
+.................... { 
+0004:  CLRF   04
+0005:  BCF    03.7
+0006:  MOVLW  1F
+0007:  ANDWF  03,F
+0008:  BSF    03.5
+0009:  BSF    1F.0
+000A:  BSF    1F.1
+000B:  BSF    1F.2
+000C:  BCF    1F.3
+.................... unsigned long m_delay_counter=DELAY_COUNTER_VALUE; 
+000D:  MOVLW  64
+000E:  BCF    03.5
+000F:  MOVWF  21
+0010:  CLRF   22
+.................... int1 x=0; 
+0011:  BCF    23.0
+.................... set_tris_d(0xff); 
+0012:  MOVLW  FF
+0013:  BSF    03.5
+0014:  MOVWF  08
+.................... set_tris_b(0x00); 
+0015:  MOVLW  00
+0016:  MOVWF  06
+.................... output_b(0); 
+0017:  CLRF   06
+0018:  BCF    03.5
+0019:  CLRF   06
+....................  
+.................... while(1) 
+.................... { 
+....................    x=input(PIN_D5); 
+001A:  BSF    03.5
+001B:  BSF    08.5
+001C:  BCF    03.5
+001D:  BCF    23.0
+001E:  BTFSC  08.5
+001F:  BSF    23.0
+....................    output_bit(PIN_B5,x); 
+0020:  BTFSC  23.0
+0021:  GOTO   024
+0022:  BCF    06.5
+0023:  GOTO   025
+0024:  BSF    06.5
+0025:  BSF    03.5
+0026:  BCF    06.5
+....................     
+....................    m_delay_counter--; 
+0027:  BCF    03.5
+0028:  MOVF   21,W
+0029:  BTFSC  03.2
+002A:  DECF   22,F
+002B:  DECFSZ 21,F
+....................     
+....................    if (m_delay_counter==0) 
+002C:  GOTO   038
+002D:  MOVF   22,F
+002E:  BTFSS  03.2
+002F:  GOTO   038
+....................       { 
+....................          m_delay_counter=DELAY_COUNTER_VALUE; 
+0030:  CLRF   22
+0031:  MOVLW  64
+0032:  MOVWF  21
+....................          output_toggle(PIN_B1); 
+0033:  BSF    03.5
+0034:  BCF    06.1
+0035:  MOVLW  02
+0036:  BCF    03.5
+0037:  XORWF  06,F
+....................       } 
+.................... } 
+0038:  GOTO   01A
+.................... } 
+0039:  SLEEP
+
+Configuration Fuses:
+   Word  1: 3F72   HS NOWDT PUT NOPROTECT BROWNOUT NOLVP NOCPD NOWRT NODEBUG

@@ -1,0 +1,10 @@
+ÀÄcontador
+   ÃÄMAIN  0/120  Ram=7
+   ³  ÃÄ??0??
+   ³  ÃÄ@DIV88  0/21  Ram=3
+   ³  ÃÄ@DIV88  0/21  Ram=3
+   ³  ÃÄbinari  0/67  Ram=1
+   ³  ³  ÀÄ@goto10042  0/14  Ram=0
+   ³  ÀÄbinari  0/67  Ram=1
+   ³     ÀÄ@goto10042  0/14  Ram=0
+   ÀÄRTCC_isr  0/23  Ram=0

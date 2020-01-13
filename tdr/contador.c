@@ -1,0 +1,133 @@
+#include <16f877.h>                    // Selecciona el PIC
+#fuses XT,NOWDT,NOPROTECT,PUT,BROWNOUT // Opciones de configuración
+#use delay(clock=20000000)              // Velocidad del Cristal : 4 Mhz
+#use rs232(baud=9600, xmit=PIN_C6, rcv=PIN_C7) // Definición del RS232
+
+
+
+byte const NInts=152;                   // Numero de interrupciones para 1 Segundo (CALCULADLO)!!!!!!!!
+
+// VARIABLES GLOBALES
+
+int16 C_Ints=0;                         // Contador de Interrupciones ocurridas
+char Flag=0;                           // Flag que cambia cada NInts interrupciones
+
+void binari(int a)
+{
+    
+   switch (a)
+   {
+   case 0:
+      output_d(0b00111111);
+      break;
+   case 1:
+      output_d(0b00000110);
+      break;
+   case 2:
+      output_d(0b01011011);
+      break;
+   case 3:
+      output_d(0b01001111);
+      break;
+   case 4:
+      output_d(0b01100110);
+      break;
+   case 5:
+      output_d(0b01101101);
+      break;
+   case 6:
+      output_d(0b01111101);
+      break;
+   case 7:
+      output_d(0b00000111);
+      break;
+   case 8:
+      output_d(0b01111111);
+      break;
+   case 9:
+      output_d(0b01100111);
+      break;
+   
+
+   }
+   
+   
+}
+
+
+
+
+
+#int_RTCC                              // Interrupción por desbordamiento
+void RTCC_isr() {                           // del TIMER0 RTCC
+
+  if(C_Ints > NInts){                  // Si las ints ocurridas > ints para 1 Seg.
+
+    if(Flag==0){
+      Flag=1;
+    }
+    else{
+      Flag=0;
+    }
+    C_Ints=0;                          // Reinicializo Contador de Ints
+  }
+  ++C_Ints;                            // Incremento el número de interrupciones
+}                                      // Ocurridas
+
+
+
+void main(void) {
+
+
+  int a = 0, un=0, des=0, i;
+  int1 p = 0;
+  char K;
+  K=Flag;
+  setup_counters(RTCC_INTERNAL,RTCC_DIV_128);// TIMER0: Clock Interno, Presescaler 128
+  enable_interrupts(INT_RTCC);               // Habilito Interrupción RTCC
+  enable_interrupts(global);                 // Habilito Interrupciones
+
+
+
+  do{ // Bucle infinito
+    if (input(PIN_B5) == 0)
+    {
+    
+    if(Flag==K){}
+    else
+    {                                        // si ha cambiado Flag ...
+
+      
+      K=Flag;    // Guardo estado anterior de Flag
+      
+      
+      
+      if (a == 0)p = 0;
+      if (a == 99)p = 1;
+      if (p == 0)a++;
+      if (p == 1)a--;
+    } 
+    }
+    un = a%10;
+    des = a/10;
+    
+    output_bit(PIN_C0, 0);
+    output_bit(PIN_C1, 1);
+    binari(un);
+    output_d(0);
+    output_bit(PIN_C0, 1);
+    output_bit(PIN_C1, 0);
+    binari(des);
+    output_d(0);
+    
+    if (input(PIN_B4) == 0) a = 0;
+    /*
+    if (input(PIN_B3) == 0) 
+    {
+      if (p == 0) p = 1;
+      else if (p == 1) p = 0;
+    }
+    */
+  }While(TRUE);
+}
+

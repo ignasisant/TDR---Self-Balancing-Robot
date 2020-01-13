@@ -1,0 +1,343 @@
+#include <16f877.h>
+#fuses XT,NOWDT,NOPROTECT,NOLVP,PUT,BROWNOUT
+#use delay(clock=20000000)
+#use rs232(baud=9600, xmit=PIN_C6, rcv=PIN_C7)
+#define Adelante 0
+#define Atras 1
+#define Derecha 2
+#define Izquierda 3
+#define parado 4
+#define Derechazo 5
+#define Izquierdazo 6
+#define GiroAtras 7
+
+
+int estado=0x04;
+int  Servo=0x00;
+int dreta=0;
+int centre=0;
+int esquerra=0;
+int dret=0;
+int izq=0;
+int adret=0;
+int aizq=0;
+int gira1000 = 0;
+int catras = 0;
+int x = 0;
+
+void toma_adc_y_transmite(void){
+   
+   // Lectura del canal 5 -> AN5 LM35a
+   set_adc_channel(5);
+   delay_ms(1);
+   dreta=read_adc();
+   delay_ms(1);
+   
+   // Lectura del canal 6 -> AN6
+   set_adc_channel(6);
+   delay_ms(1);
+   centre=read_adc();
+   delay_ms(1);
+   
+   // Lectura del canal 7 -> AN7
+   set_adc_channel(7);
+   delay_ms(1);
+   esquerra=read_adc();
+   delay_ms(1);
+}
+
+
+void toma_distancia(void){
+   
+   // Lectura del canal 2 -> AN2
+   set_adc_channel(2);
+   delay_ms(1);
+   dret=read_adc();
+   delay_ms(1);
+   
+   // Lectura del canal 3 -> AN3
+   set_adc_channel(3);
+   delay_ms(1);
+   izq = read_adc();
+   delay_ms(1);
+   if (aizq < 80 && izq > 80) estado = Izquierda; //se va por la izquierda
+   if (adret < 80 && dret > 80) estado = Derecha; //se va por la derecha
+   if(izq > dret && izq < 80 && dret < 80) estado  = Derecha; //esta por la derecha
+   else estado = Adelante; //esta delante
+   if(izq < dret && izq < 80 && dret < 80) estado = Izquierda; //esta por la izquierda
+   else estado = Adelante; //esta delante
+   if(izq == dret) estado = Adelante; //esta delante
+   adret = dret; //guardo el estado actual
+   aizq = izq; //guardo el estado actual
+}
+
+
+
+#int_TIMER1
+void timer1_isr(){
+
+// Modulaci?n 
+
+Switch(Estado){
+
+ Case Adelante:
+ //printf("adelante\n");
+   Switch(Servo){
+       
+      Case 0: output_high(PIN_B2);
+              output_high(PIN_B1);
+              set_timer1(65536-313); //0,5
+              break;
+              
+      Case 1: output_low(PIN_B2);
+              //output_high(PIN_B2);
+              set_timer1(65536-1250); //1,5
+              break;
+              
+      Case 2: //output_low(PIN_B1);
+              output_low(PIN_B1);
+              set_timer1(65536-10937); //18
+              break;
+   }
+   break;
+   
+   Case Atras:
+      ++catras;
+    //printf("atras\n");
+      Switch(Servo){
+       
+       Case 0: output_high(PIN_B1);
+               output_high(PIN_B2);
+               set_timer1(65536-313); //0,5
+               break;
+              
+      Case 1: output_low(PIN_B1);
+              //output_high(PIN_B1);
+              set_timer1(65536-1250); //1,5
+              break;
+              
+      Case 2: //output_low(PIN_B2);
+              output_low(PIN_B2);
+              set_timer1(65536-10937); //18
+              break;
+   }break;
+      
+    Case Derecha:
+   //printf("derecha\n");
+      Switch(Servo){
+      
+          Case 0: output_high(PIN_B2); 
+              output_low(PIN_B1);
+              set_timer1(65536-313); //0,5
+              break;
+              
+      Case 1: output_high(PIN_B2);
+              output_low(PIN_B1);
+              set_timer1(65536-313); //0,5
+              break;
+              
+      Case 2: output_low(PIN_B2);
+              output_low(PIN_B1);
+              set_timer1(65536-11562); //19
+              break;
+   }break;
+   
+     Case Izquierda:
+   /*printf("izquierda\n");*/
+      Switch(Servo){
+      
+      Case 0: output_high(PIN_B1);
+              output_low(PIN_B2);
+              set_timer1(65536-313); //0,5
+              break;
+              
+      Case 1: output_high(PIN_B1);
+              output_low(PIN_B2);
+              set_timer1(65536-800); //1,28
+              break;
+              
+      Case 2: output_low(PIN_B1);
+              output_low(PIN_B2);
+              set_timer1(65536-11388); //18,22
+              break;
+   }break;
+   Case parado:
+   /*printf("parado\n");*/
+      Switch(Servo){
+      
+      Case 0: output_low(PIN_B1);
+              output_low(PIN_B2);
+              set_timer1(65536-313); //0.5
+              break;
+              
+      Case 1: output_low(PIN_B1);
+              output_low(PIN_B2);
+              set_timer1(65536-625); //1
+              break;
+              
+      Case 2: output_low(PIN_B1);
+              output_low(PIN_B2);
+              set_timer1(65536-11562); //18,5
+              break;
+   }break;
+   Case Derechazo:
+     //    ++gira1000;
+   //printf("derecha\n");
+      Switch(Servo){
+      
+          Case 0: output_low(PIN_B2);
+              output_low(PIN_B1);
+              set_timer1(65536-313); //0,5
+              break;
+              
+      Case 1: output_high(PIN_B1);
+              output_high(PIN_B2);
+              set_timer1(65536-800); //1,28
+              break;
+              
+      Case 2: output_low(PIN_B2);
+              output_low(PIN_B1);
+              set_timer1(65536-11562); //18,22
+              break;
+   }break;
+   
+     Case Izquierdazo:
+        //   ++gira1000;
+   /*printf("izquierda\n");*/
+      Switch(Servo){
+      
+      Case 0: output_high(PIN_B1);
+              output_high(PIN_B2);
+              set_timer1(65536-313); //0,5
+              break;
+              
+      Case 1: output_high(PIN_B1);
+              output_high(PIN_B2);
+              set_timer1(65536-700); //1,12
+              break;
+              
+      Case 2: output_low(PIN_B1);
+              output_low(PIN_B2);
+              set_timer1(65536-11562); //18,38
+              break;
+   }break;
+   Case GiroAtras:
+      ++gira1000;
+   //printf("derecha\n");
+      Switch(Servo){
+      
+      Case 0: output_high(PIN_B2);
+              output_high(PIN_B1);
+              set_timer1(65536-313); //0,5
+              break;
+              
+      Case 1: output_high(PIN_B2);
+              output_low(PIN_B1);
+              set_timer1(65536-625); //1
+              break;
+              
+      Case 2: output_low(PIN_B2);
+              output_low(PIN_B1);
+              set_timer1(65536-11562);  //18,5
+              break;
+   }break;
+}
+ 
+   if(++Servo>2){
+      Servo=0;
+   }//SERVO=1-SERVO;}
+
+}
+
+
+
+
+void main() {  
+   set_tris_c(0xff);
+   set_tris_d(0x00);
+   output_bit(PIN_D7,1);
+   x=input(PIN_C0);
+   printf("\r\n\ La x: %u \r\n",x);
+   
+   if (x == 0x01){
+      setup_adc(ADC_CLOCK_INTERNAL);
+      setup_adc_ports(ALL_ANALOG);
+      SETUP_TIMER_1(T1_INTERNAL|T1_DIV_BY_8);
+      setup_timer_2(T2_DISABLED,0,1);
+      enable_interrupts(INT_TIMER1);
+      enable_interrupts(int_rda);
+      enable_interrupts(global);
+      SET_TRIS_E (0b00000111);
+      set_tris_b(0x00);
+      estado = Adelante;
+      do {
+         toma_adc_y_transmite();
+         if ((dreta<100)||(centre < 100)||(esquerra < 100)){
+            estado=Atras;
+         }
+         if(estado == Atras && catras < 50);
+         else{
+            if(estado == Atras) estado = GiroAtras;
+            if(estado == GiroAtras && gira1000 < 50);
+            else{
+               gira1000 = 0;
+               catras = 0;
+               toma_distancia();
+               if ((izq < 70 && dret < 70) || (izq >= 70 && dret >= 70)) {
+                  estado = Adelante;
+                  printf("\r\n Endavant \r\n");
+               }
+               else if(izq > 70 ) {
+                  estado=Izquierda;
+                  printf("\r\n Esquerra \r\n");
+               }
+               else if(dret > 70){
+                  estado=Derecha;
+                  printf("\r\n Dreta \r\n");
+               }
+               else {
+                  estado = Adelante;
+                  printf("\r\n Endavant \r\n");
+               }
+            }
+         }
+      } while (TRUE);
+   }
+   else{
+      set_tris_d(0);
+      setup_adc(ADC_CLOCK_INTERNAL);
+      setup_adc_ports(ALL_ANALOG);
+      SETUP_TIMER_1(T1_INTERNAL|T1_DIV_BY_8);
+      setup_timer_2(T2_DISABLED,0,1);
+      enable_interrupts(INT_TIMER1);
+      //   enable_interrupts(int_rda);
+      enable_interrupts(global);
+      SET_TRIS_E (0b00000111);
+      set_tris_b(0x00);
+      printf("\r\n\PWM (TIMER1) OS\r\n");
+      toma_adc_y_transmite();
+      if ((dreta>200)&(centre>200)&(esquerra>200)){
+         estado=Adelante;
+      }
+      if ((dreta>200)&(centre>200)&(esquerra<100)){
+         estado=Izquierda;
+      }
+      if ((dreta<100)&(centre>200)&(esquerra>200)){
+         estado=Derecha;
+      }
+      do {
+         toma_adc_y_transmite();
+         if ((dreta>200)&(centre<100)&(esquerra>200)){
+            estado = Adelante;
+         }
+         if ((dreta>200)&(esquerra<100)){
+            estado=Izquierda;
+         }
+         if ((dreta<100)&(esquerra>200)){
+            estado = Derecha;
+         }
+      } while (TRUE);
+   }
+   }
+
+

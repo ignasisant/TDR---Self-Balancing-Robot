@@ -1,0 +1,887 @@
+CCS PCM C Compiler, Version 4.088, 5967               15-jul-16 12:36
+
+               Filename: C:\Users\Administrator\Desktop\Ignasi i Bernat i Andreu\sumo.lst
+
+               ROM used: 607 words (7%)
+                         Largest free fragment is 2048
+               RAM used: 22 (6%) at main() level
+                         23 (6%) worst case
+               Stack:    3 worst case (2 in main + 1 for interrupts)
+
+*
+0000:  MOVLW  01
+0001:  MOVWF  0A
+0002:  GOTO   1B9
+0003:  NOP
+0004:  MOVWF  7F
+0005:  SWAPF  03,W
+0006:  CLRF   03
+0007:  MOVWF  21
+0008:  MOVF   0A,W
+0009:  MOVWF  20
+000A:  CLRF   0A
+000B:  MOVF   04,W
+000C:  MOVWF  22
+000D:  MOVF   77,W
+000E:  MOVWF  23
+000F:  MOVF   78,W
+0010:  MOVWF  24
+0011:  MOVF   79,W
+0012:  MOVWF  25
+0013:  MOVF   7A,W
+0014:  MOVWF  26
+0015:  MOVF   7B,W
+0016:  MOVWF  27
+0017:  BCF    03.7
+0018:  BCF    03.5
+0019:  MOVLW  8C
+001A:  MOVWF  04
+001B:  BTFSS  00.0
+001C:  GOTO   01F
+001D:  BTFSC  0C.0
+001E:  GOTO   032
+001F:  MOVF   22,W
+0020:  MOVWF  04
+0021:  MOVF   23,W
+0022:  MOVWF  77
+0023:  MOVF   24,W
+0024:  MOVWF  78
+0025:  MOVF   25,W
+0026:  MOVWF  79
+0027:  MOVF   26,W
+0028:  MOVWF  7A
+0029:  MOVF   27,W
+002A:  MOVWF  7B
+002B:  MOVF   20,W
+002C:  MOVWF  0A
+002D:  SWAPF  21,W
+002E:  MOVWF  03
+002F:  SWAPF  7F,F
+0030:  SWAPF  7F,W
+0031:  RETFIE
+0032:  BCF    0A.3
+0033:  BCF    0A.4
+0034:  GOTO   035
+....................  
+.................... #include <16F877.h> 
+.................... //////// Standard Header file for the PIC16F877 device //////////////// 
+.................... #device PIC16F877 
+.................... #list 
+....................  
+.................... #fuses HS,NOWDT,NOPROTECT,NOLVP,PUT,BROWNOUT  
+.................... #use delay(clock=20000000) 
+*
+012B:  MOVLW  30
+012C:  MOVWF  04
+012D:  BCF    03.7
+012E:  MOVF   00,W
+012F:  BTFSC  03.2
+0130:  GOTO   13E
+0131:  MOVLW  06
+0132:  MOVWF  78
+0133:  CLRF   77
+0134:  DECFSZ 77,F
+0135:  GOTO   134
+0136:  DECFSZ 78,F
+0137:  GOTO   133
+0138:  MOVLW  7B
+0139:  MOVWF  77
+013A:  DECFSZ 77,F
+013B:  GOTO   13A
+013C:  DECFSZ 00,F
+013D:  GOTO   131
+013E:  RETLW  00
+.................... #use rs232(baud=9600, xmit=PIN_C6, rcv=PIN_C7)  // Definicion del RS232 
+....................  
+.................... int esquerra, dreta, central;  
+.................... int esquerra_u, dreta_u; 
+.................... char movimiento=' '; 
+*
+01CA:  MOVLW  20
+01CB:  BCF    03.5
+01CC:  MOVWF  2D
+.................... int aux=0; 
+01CD:  CLRF   2E
+....................  
+....................  
+.................... #INT_TIMER1 
+.................... void isr_timer1(){ 
+....................  
+....................  
+....................  
+....................  
+....................  
+....................  switch (movimiento){ 
+*
+0035:  MOVF   2D,W
+0036:  XORLW  77
+0037:  BTFSC  03.2
+0038:  GOTO   049
+0039:  XORLW  07
+003A:  BTFSC  03.2
+003B:  GOTO   06E
+003C:  XORLW  11
+003D:  BTFSC  03.2
+003E:  GOTO   093
+003F:  XORLW  12
+0040:  BTFSC  03.2
+0041:  GOTO   0B8
+0042:  XORLW  10
+0043:  BTFSC  03.2
+0044:  GOTO   0DD
+0045:  XORLW  19
+0046:  BTFSC  03.2
+0047:  GOTO   102
+0048:  GOTO   127
+....................        
+....................          case 'w': //adelante Servo 1 
+....................           
+....................           switch(aux){ 
+0049:  MOVF   2E,W
+004A:  BTFSC  03.2
+004B:  GOTO   050
+004C:  XORLW  01
+004D:  BTFSC  03.2
+004E:  GOTO   05F
+004F:  GOTO   06D
+....................            
+....................             case 0: 
+....................              output_high(PIN_B1); 
+0050:  BSF    03.5
+0051:  BCF    06.1
+0052:  BCF    03.5
+0053:  BSF    06.1
+....................              output_low(PIN_B2); 
+0054:  BSF    03.5
+0055:  BCF    06.2
+0056:  BCF    03.5
+0057:  BCF    06.2
+....................              set_timer1(63973);//2.5 
+0058:  MOVLW  F9
+0059:  MOVWF  0F
+005A:  MOVLW  E5
+005B:  MOVWF  0E
+....................             //  printf("adelante0\n\r"); 
+....................               aux=1; 
+005C:  MOVLW  01
+005D:  MOVWF  2E
+....................             break; 
+005E:  GOTO   06D
+....................              
+....................             case 1: 
+....................               output_low(PIN_B1); 
+005F:  BSF    03.5
+0060:  BCF    06.1
+0061:  BCF    03.5
+0062:  BCF    06.1
+....................               output_high(PIN_B2); 
+0063:  BSF    03.5
+0064:  BCF    06.2
+0065:  BCF    03.5
+0066:  BSF    06.2
+....................              set_timer1(54598);//17.5 
+0067:  MOVLW  D5
+0068:  MOVWF  0F
+0069:  MOVLW  46
+006A:  MOVWF  0E
+....................               //printf("adelante1\n\r"); 
+....................              aux=0; 
+006B:  CLRF   2E
+....................             break; 
+006C:  GOTO   06D
+....................           } 
+....................           
+....................          break; 
+006D:  GOTO   127
+....................           
+....................           
+....................          case 'p'://para Servo 1 
+....................          switch(aux){ 
+006E:  MOVF   2E,W
+006F:  BTFSC  03.2
+0070:  GOTO   075
+0071:  XORLW  01
+0072:  BTFSC  03.2
+0073:  GOTO   084
+0074:  GOTO   092
+....................            
+....................             case 0: 
+....................              output_high(PIN_B1); 
+0075:  BSF    03.5
+0076:  BCF    06.1
+0077:  BCF    03.5
+0078:  BSF    06.1
+....................              output_low(PIN_B2); 
+0079:  BSF    03.5
+007A:  BCF    06.2
+007B:  BCF    03.5
+007C:  BCF    06.2
+....................              set_timer1(64598); 
+007D:  MOVLW  FC
+007E:  MOVWF  0F
+007F:  MOVLW  56
+0080:  MOVWF  0E
+....................               
+....................               aux=1; 
+0081:  MOVLW  01
+0082:  MOVWF  2E
+....................             break; 
+0083:  GOTO   092
+....................              
+....................             case 1: 
+....................               output_low(PIN_B1); 
+0084:  BSF    03.5
+0085:  BCF    06.1
+0086:  BCF    03.5
+0087:  BCF    06.1
+....................               output_high(PIN_B2); 
+0088:  BSF    03.5
+0089:  BCF    06.2
+008A:  BCF    03.5
+008B:  BSF    06.2
+....................              set_timer1(53973); 
+008C:  MOVLW  D2
+008D:  MOVWF  0F
+008E:  MOVLW  D5
+008F:  MOVWF  0E
+....................              
+....................              aux=0; 
+0090:  CLRF   2E
+....................             break; 
+0091:  GOTO   092
+....................           } 
+....................          break; 
+0092:  GOTO   127
+....................            
+....................           case 'a': //atras Servo 1 
+....................          switch(aux){ 
+0093:  MOVF   2E,W
+0094:  BTFSC  03.2
+0095:  GOTO   09A
+0096:  XORLW  01
+0097:  BTFSC  03.2
+0098:  GOTO   0A9
+0099:  GOTO   0B7
+....................            
+....................             case 0: 
+....................              output_high(PIN_B1); 
+009A:  BSF    03.5
+009B:  BCF    06.1
+009C:  BCF    03.5
+009D:  BSF    06.1
+....................              output_high(PIN_B2); 
+009E:  BSF    03.5
+009F:  BCF    06.2
+00A0:  BCF    03.5
+00A1:  BSF    06.2
+....................              set_timer1(65223);//0.5 
+00A2:  MOVLW  FE
+00A3:  MOVWF  0F
+00A4:  MOVLW  C7
+00A5:  MOVWF  0E
+....................               //printf("atras0\n\r"); 
+....................              aux=1; 
+00A6:  MOVLW  01
+00A7:  MOVWF  2E
+....................             break; 
+00A8:  GOTO   0B7
+....................              
+....................             case 1: 
+....................               output_low(PIN_B1); 
+00A9:  BSF    03.5
+00AA:  BCF    06.1
+00AB:  BCF    03.5
+00AC:  BCF    06.1
+....................               output_low(PIN_B2); 
+00AD:  BSF    03.5
+00AE:  BCF    06.2
+00AF:  BCF    03.5
+00B0:  BCF    06.2
+....................              set_timer1(53348);//19.5 
+00B1:  MOVLW  D0
+00B2:  MOVWF  0F
+00B3:  MOVLW  64
+00B4:  MOVWF  0E
+....................               //printf("atras1\n\r"); 
+....................              aux=0; 
+00B5:  CLRF   2E
+....................             break; 
+00B6:  GOTO   0B7
+....................           } 
+....................            break; 
+00B7:  GOTO   127
+....................            
+....................           case 's': //atras Servo 1 
+....................          switch(aux){ 
+00B8:  MOVF   2E,W
+00B9:  BTFSC  03.2
+00BA:  GOTO   0BF
+00BB:  XORLW  01
+00BC:  BTFSC  03.2
+00BD:  GOTO   0CE
+00BE:  GOTO   0DC
+....................            
+....................             case 0: 
+....................              output_low(PIN_B1); 
+00BF:  BSF    03.5
+00C0:  BCF    06.1
+00C1:  BCF    03.5
+00C2:  BCF    06.1
+....................              output_low(PIN_B2); 
+00C3:  BSF    03.5
+00C4:  BCF    06.2
+00C5:  BCF    03.5
+00C6:  BCF    06.2
+....................              set_timer1(63661);//0.5 
+00C7:  MOVLW  F8
+00C8:  MOVWF  0F
+00C9:  MOVLW  AD
+00CA:  MOVWF  0E
+....................               //printf("atras0\n\r"); 
+....................              aux=1; 
+00CB:  MOVLW  01
+00CC:  MOVWF  2E
+....................             break; 
+00CD:  GOTO   0DC
+....................              
+....................             case 1: 
+....................              output_high(PIN_B1); 
+00CE:  BSF    03.5
+00CF:  BCF    06.1
+00D0:  BCF    03.5
+00D1:  BSF    06.1
+....................              output_high(PIN_B2); 
+00D2:  BSF    03.5
+00D3:  BCF    06.2
+00D4:  BCF    03.5
+00D5:  BSF    06.2
+....................              set_timer1(54910);//19.5 
+00D6:  MOVLW  D6
+00D7:  MOVWF  0F
+00D8:  MOVLW  7E
+00D9:  MOVWF  0E
+....................               //printf("atras1\n\r"); 
+....................              aux=0; 
+00DA:  CLRF   2E
+....................             break; 
+00DB:  GOTO   0DC
+....................           } 
+....................            break; 
+00DC:  GOTO   127
+....................             
+....................           case 'c': //atras Servo 1 
+....................          switch(aux){ 
+00DD:  MOVF   2E,W
+00DE:  BTFSC  03.2
+00DF:  GOTO   0E4
+00E0:  XORLW  01
+00E1:  BTFSC  03.2
+00E2:  GOTO   0F3
+00E3:  GOTO   101
+....................            
+....................             case 0: 
+....................              output_low(PIN_B1); 
+00E4:  BSF    03.5
+00E5:  BCF    06.1
+00E6:  BCF    03.5
+00E7:  BCF    06.1
+....................              output_low(PIN_B2); 
+00E8:  BSF    03.5
+00E9:  BCF    06.2
+00EA:  BCF    03.5
+00EB:  BCF    06.2
+....................              set_timer1(64442);//0.5 
+00EC:  MOVLW  FB
+00ED:  MOVWF  0F
+00EE:  MOVLW  BA
+00EF:  MOVWF  0E
+....................               //printf("atras0\n\r"); 
+....................              aux=1; 
+00F0:  MOVLW  01
+00F1:  MOVWF  2E
+....................             break; 
+00F2:  GOTO   101
+....................              
+....................             case 1: 
+....................              output_high(PIN_B1); 
+00F3:  BSF    03.5
+00F4:  BCF    06.1
+00F5:  BCF    03.5
+00F6:  BSF    06.1
+....................              output_high(PIN_B2); 
+00F7:  BSF    03.5
+00F8:  BCF    06.2
+00F9:  BCF    03.5
+00FA:  BSF    06.2
+....................              set_timer1(54129);//19.5 
+00FB:  MOVLW  D3
+00FC:  MOVWF  0F
+00FD:  MOVLW  71
+00FE:  MOVWF  0E
+....................               //printf("atras1\n\r"); 
+....................              aux=0; 
+00FF:  CLRF   2E
+....................             break; 
+0100:  GOTO   101
+....................           } 
+....................            break; 
+0101:  GOTO   127
+....................           case 'z': //atras Servo 1 
+....................          switch(aux){ 
+0102:  MOVF   2E,W
+0103:  BTFSC  03.2
+0104:  GOTO   109
+0105:  XORLW  01
+0106:  BTFSC  03.2
+0107:  GOTO   118
+0108:  GOTO   126
+....................            
+....................             case 0: 
+....................              output_low(PIN_B1); 
+0109:  BSF    03.5
+010A:  BCF    06.1
+010B:  BCF    03.5
+010C:  BCF    06.1
+....................              output_low(PIN_B2); 
+010D:  BSF    03.5
+010E:  BCF    06.2
+010F:  BCF    03.5
+0110:  BCF    06.2
+....................              set_timer1(64755);//0.5 
+0111:  MOVLW  FC
+0112:  MOVWF  0F
+0113:  MOVLW  F3
+0114:  MOVWF  0E
+....................               //printf("atras0\n\r"); 
+....................              aux=1; 
+0115:  MOVLW  01
+0116:  MOVWF  2E
+....................             break; 
+0117:  GOTO   126
+....................              
+....................             case 1: 
+....................              output_high(PIN_B1); 
+0118:  BSF    03.5
+0119:  BCF    06.1
+011A:  BCF    03.5
+011B:  BSF    06.1
+....................              output_high(PIN_B2); 
+011C:  BSF    03.5
+011D:  BCF    06.2
+011E:  BCF    03.5
+011F:  BSF    06.2
+....................              set_timer1(53816);//19.5 
+0120:  MOVLW  D2
+0121:  MOVWF  0F
+0122:  MOVLW  38
+0123:  MOVWF  0E
+....................               //printf("atras1\n\r"); 
+....................              aux=0; 
+0124:  CLRF   2E
+....................             break; 
+0125:  GOTO   126
+....................           } 
+....................            
+....................          break; 
+0126:  GOTO   127
+....................           
+....................       } 
+....................         
+....................         
+....................         
+....................         
+....................         
+.................... } 
+....................  
+....................  
+....................  
+0127:  BCF    0C.0
+0128:  BCF    0A.3
+0129:  BCF    0A.4
+012A:  GOTO   01F
+.................... void linia(){ //funcio per poder llegir els sensors de linia 
+....................     
+....................    set_adc_channel(5); 
+*
+0171:  MOVLW  28
+0172:  MOVWF  78
+0173:  MOVF   1F,W
+0174:  ANDLW  C7
+0175:  IORWF  78,W
+0176:  MOVWF  1F
+....................    delay_ms(1); 
+0177:  MOVLW  01
+0178:  MOVWF  30
+0179:  CALL   12B
+....................    dreta = read_adc(); 
+017A:  BSF    1F.2
+017B:  BTFSC  1F.2
+017C:  GOTO   17B
+017D:  MOVF   1E,W
+017E:  MOVWF  29
+....................    if (dreta > 150) dreta = 1;  // troba negre 
+017F:  MOVF   29,W
+0180:  SUBLW  96
+0181:  BTFSC  03.0
+0182:  GOTO   186
+0183:  MOVLW  01
+0184:  MOVWF  29
+....................    else dreta = 0; 
+0185:  GOTO   187
+0186:  CLRF   29
+....................    set_adc_channel(6); 
+0187:  MOVLW  30
+0188:  MOVWF  78
+0189:  MOVF   1F,W
+018A:  ANDLW  C7
+018B:  IORWF  78,W
+018C:  MOVWF  1F
+....................    delay_ms(1); 
+018D:  MOVLW  01
+018E:  MOVWF  30
+018F:  CALL   12B
+....................    central = read_adc(); 
+0190:  BSF    1F.2
+0191:  BTFSC  1F.2
+0192:  GOTO   191
+0193:  MOVF   1E,W
+0194:  MOVWF  2A
+....................     if (central > 150) esquerra = 1;  // troba negre 
+0195:  MOVF   2A,W
+0196:  SUBLW  96
+0197:  BTFSC  03.0
+0198:  GOTO   19C
+0199:  MOVLW  01
+019A:  MOVWF  28
+....................     else central = 0; 
+019B:  GOTO   19D
+019C:  CLRF   2A
+....................    set_adc_channel(7); 
+019D:  MOVLW  38
+019E:  MOVWF  78
+019F:  MOVF   1F,W
+01A0:  ANDLW  C7
+01A1:  IORWF  78,W
+01A2:  MOVWF  1F
+....................    delay_ms(1); 
+01A3:  MOVLW  01
+01A4:  MOVWF  30
+01A5:  CALL   12B
+....................    esquerra = read_adc(); 
+01A6:  BSF    1F.2
+01A7:  BTFSC  1F.2
+01A8:  GOTO   1A7
+01A9:  MOVF   1E,W
+01AA:  MOVWF  28
+....................    if (esquerra > 150) esquerra = 1;  // troba negre 
+01AB:  MOVF   28,W
+01AC:  SUBLW  96
+01AD:  BTFSC  03.0
+01AE:  GOTO   1B2
+01AF:  MOVLW  01
+01B0:  MOVWF  28
+....................    else esquerra = 0; 
+01B1:  GOTO   1B3
+01B2:  CLRF   28
+....................     
+....................    delay_ms(100); 
+01B3:  MOVLW  64
+01B4:  MOVWF  30
+01B5:  CALL   12B
+....................      
+.................... } 
+01B6:  BCF    0A.3
+01B7:  BCF    0A.4
+01B8:  GOTO   1E5 (RETURN)
+....................  
+.................... void ulls(){ //funcio per poder llegir els sensor sharp 
+....................     
+....................    set_adc_channel(2); //activem la sortida que volem llegir  
+*
+013F:  MOVLW  10
+0140:  MOVWF  78
+0141:  MOVF   1F,W
+0142:  ANDLW  C7
+0143:  IORWF  78,W
+0144:  MOVWF  1F
+....................    delay_ms(1); 
+0145:  MOVLW  01
+0146:  MOVWF  30
+0147:  CALL   12B
+....................    dreta_u = read_adc(); //llegim el valor  
+0148:  BSF    1F.2
+0149:  BTFSC  1F.2
+014A:  GOTO   149
+014B:  MOVF   1E,W
+014C:  MOVWF  2C
+....................    if (dreta_u > 100) dreta_u = 1;  // troba negre 
+014D:  MOVF   2C,W
+014E:  SUBLW  64
+014F:  BTFSC  03.0
+0150:  GOTO   154
+0151:  MOVLW  01
+0152:  MOVWF  2C
+....................    else dreta_u = 0; 
+0153:  GOTO   155
+0154:  CLRF   2C
+....................     
+....................    set_adc_channel(3); //activem l'altre sortida   
+0155:  MOVLW  18
+0156:  MOVWF  78
+0157:  MOVF   1F,W
+0158:  ANDLW  C7
+0159:  IORWF  78,W
+015A:  MOVWF  1F
+....................    delay_ms(1); 
+015B:  MOVLW  01
+015C:  MOVWF  30
+015D:  CALL   12B
+....................    esquerra_u = read_adc(); //llegim el valor 
+015E:  BSF    1F.2
+015F:  BTFSC  1F.2
+0160:  GOTO   15F
+0161:  MOVF   1E,W
+0162:  MOVWF  2B
+....................    if (esquerra_u > 100) esquerra_u = 1;  // troba negre 
+0163:  MOVF   2B,W
+0164:  SUBLW  64
+0165:  BTFSC  03.0
+0166:  GOTO   16A
+0167:  MOVLW  01
+0168:  MOVWF  2B
+....................    else esquerra_u = 0; 
+0169:  GOTO   16B
+016A:  CLRF   2B
+....................  
+....................    delay_ms(100); 
+016B:  MOVLW  64
+016C:  MOVWF  30
+016D:  CALL   12B
+....................     
+....................     
+.................... } 
+016E:  BCF    0A.3
+016F:  BCF    0A.4
+0170:  GOTO   1E4 (RETURN)
+....................     
+....................  
+.................... void main(){ 
+*
+01B9:  CLRF   04
+01BA:  BCF    03.7
+01BB:  MOVLW  1F
+01BC:  ANDWF  03,F
+01BD:  MOVLW  81
+01BE:  BSF    03.5
+01BF:  MOVWF  19
+01C0:  MOVLW  A6
+01C1:  MOVWF  18
+01C2:  MOVLW  90
+01C3:  BCF    03.5
+01C4:  MOVWF  18
+01C5:  BSF    03.5
+01C6:  BSF    1F.0
+01C7:  BSF    1F.1
+01C8:  BSF    1F.2
+01C9:  BCF    1F.3
+....................  
+....................   
+....................     
+....................    setup_adc(ADC_CLOCK_INTERNAL); //activem el clock intern 
+*
+01CE:  BSF    1F.6
+01CF:  BSF    1F.7
+01D0:  BSF    03.5
+01D1:  BCF    1F.7
+01D2:  BCF    03.5
+01D3:  BSF    1F.0
+....................    setup_adc_ports(ALL_ANALOG); //activem tots els pins analogics  
+01D4:  BSF    03.5
+01D5:  BCF    1F.0
+01D6:  BCF    1F.1
+01D7:  BCF    1F.2
+01D8:  BCF    1F.3
+....................     
+....................    set_tris_b(0x00); 
+01D9:  MOVLW  00
+01DA:  MOVWF  06
+....................     
+....................  
+....................    setup_timer_1(T1_INTERNAL|T1_DIV_BY_8); //activa el timer 1 
+01DB:  MOVLW  B5
+01DC:  BCF    03.5
+01DD:  MOVWF  10
+....................  
+....................    
+....................    enable_interrupts(INT_TIMER1); 
+01DE:  BSF    03.5
+01DF:  BSF    0C.0
+....................    enable_interrupts(global); 
+01E0:  MOVLW  C0
+01E1:  BCF    03.5
+01E2:  IORWF  0B,F
+....................  
+.................... while(1){ 
+....................    ulls(); 
+01E3:  GOTO   13F
+....................    linia(); 
+01E4:  GOTO   171
+....................    if ((dreta == 1 && central == 1 && esquerra == 1) || (dreta_u == 1 && esquerra_u == 1))movimiento = 'w';         
+01E5:  DECFSZ 29,W
+01E6:  GOTO   1EC
+01E7:  DECFSZ 2A,W
+01E8:  GOTO   1EC
+01E9:  DECFSZ 28,W
+01EA:  GOTO   1EC
+01EB:  GOTO   1F0
+01EC:  DECFSZ 2C,W
+01ED:  GOTO   1F3
+01EE:  DECFSZ 2B,W
+01EF:  GOTO   1F3
+01F0:  MOVLW  77
+01F1:  MOVWF  2D
+....................    else if ((dreta == 0 && esquerra == 0) || (central == 0 && dreta == 0 && esquerra == 0)) 
+01F2:  GOTO   25D
+01F3:  MOVF   29,F
+01F4:  BTFSS  03.2
+01F5:  GOTO   1F9
+01F6:  MOVF   28,F
+01F7:  BTFSC  03.2
+01F8:  GOTO   202
+01F9:  MOVF   2A,F
+01FA:  BTFSS  03.2
+01FB:  GOTO   20E
+01FC:  MOVF   29,F
+01FD:  BTFSS  03.2
+01FE:  GOTO   20E
+01FF:  MOVF   28,F
+0200:  BTFSS  03.2
+0201:  GOTO   20E
+....................    { 
+....................       movimiento = 's'; 
+0202:  MOVLW  73
+0203:  MOVWF  2D
+....................       delay_ms(500); 
+0204:  MOVLW  02
+0205:  MOVWF  2F
+0206:  MOVLW  FA
+0207:  MOVWF  30
+0208:  CALL   12B
+0209:  DECFSZ 2F,F
+020A:  GOTO   206
+....................       movimiento = 'p'; 
+020B:  MOVLW  70
+020C:  MOVWF  2D
+....................    } 
+....................    else if (dreta == 0 && (esquerra == 1 && (central == 1 || central == 0))) 
+020D:  GOTO   25D
+020E:  MOVF   29,F
+020F:  BTFSS  03.2
+0210:  GOTO   225
+0211:  DECFSZ 28,W
+0212:  GOTO   225
+0213:  DECFSZ 2A,W
+0214:  GOTO   216
+0215:  GOTO   219
+0216:  MOVF   2A,F
+0217:  BTFSS  03.2
+0218:  GOTO   225
+....................    { 
+....................       movimiento = 'a'; 
+0219:  MOVLW  61
+021A:  MOVWF  2D
+....................       delay_ms(500); 
+021B:  MOVLW  02
+021C:  MOVWF  2F
+021D:  MOVLW  FA
+021E:  MOVWF  30
+021F:  CALL   12B
+0220:  DECFSZ 2F,F
+0221:  GOTO   21D
+....................       movimiento = 'p'; 
+0222:  MOVLW  70
+0223:  MOVWF  2D
+....................    }  
+....................    else if (esquerra == 0 && (dreta == 1 && (central == 1 || central == 0))) 
+0224:  GOTO   25D
+0225:  MOVF   28,F
+0226:  BTFSS  03.2
+0227:  GOTO   23C
+0228:  DECFSZ 29,W
+0229:  GOTO   23C
+022A:  DECFSZ 2A,W
+022B:  GOTO   22D
+022C:  GOTO   230
+022D:  MOVF   2A,F
+022E:  BTFSS  03.2
+022F:  GOTO   23C
+....................    { 
+....................       movimiento = 'd'; 
+0230:  MOVLW  64
+0231:  MOVWF  2D
+....................       delay_ms(500); 
+0232:  MOVLW  02
+0233:  MOVWF  2F
+0234:  MOVLW  FA
+0235:  MOVWF  30
+0236:  CALL   12B
+0237:  DECFSZ 2F,F
+0238:  GOTO   234
+....................       movimiento = 'p'; 
+0239:  MOVLW  70
+023A:  MOVWF  2D
+....................    }        
+....................    else if (dreta_u == 1 && esquerra_u == 0) 
+023B:  GOTO   25D
+023C:  DECFSZ 2C,W
+023D:  GOTO   24D
+023E:  MOVF   2B,F
+023F:  BTFSS  03.2
+0240:  GOTO   24D
+....................    { 
+....................       movimiento = 'c'; 
+0241:  MOVLW  63
+0242:  MOVWF  2D
+....................       delay_ms(500); 
+0243:  MOVLW  02
+0244:  MOVWF  2F
+0245:  MOVLW  FA
+0246:  MOVWF  30
+0247:  CALL   12B
+0248:  DECFSZ 2F,F
+0249:  GOTO   245
+....................       movimiento = 'p'; 
+024A:  MOVLW  70
+024B:  MOVWF  2D
+....................    }  
+....................    else if (dreta_u == 0 && esquerra_u == 1) 
+024C:  GOTO   25D
+024D:  MOVF   2C,F
+024E:  BTFSS  03.2
+024F:  GOTO   25D
+0250:  DECFSZ 2B,W
+0251:  GOTO   25D
+....................    { 
+....................       movimiento = 'z'; 
+0252:  MOVLW  7A
+0253:  MOVWF  2D
+....................       delay_ms(500); 
+0254:  MOVLW  02
+0255:  MOVWF  2F
+0256:  MOVLW  FA
+0257:  MOVWF  30
+0258:  CALL   12B
+0259:  DECFSZ 2F,F
+025A:  GOTO   256
+....................       movimiento = 'p'; 
+025B:  MOVLW  70
+025C:  MOVWF  2D
+....................    }  
+.................... } 
+025D:  GOTO   1E3
+....................  
+.................... } 
+025E:  SLEEP
+
+Configuration Fuses:
+   Word  1: 3F72   HS NOWDT PUT NOPROTECT BROWNOUT NOLVP NOCPD NOWRT NODEBUG

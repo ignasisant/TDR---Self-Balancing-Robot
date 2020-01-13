@@ -1,0 +1,25 @@
+#include <16F877.h>
+#fuses HS,NOWDT,NOPROTECT,NOLVP
+#use delay(clock=4000000)
+
+#define ZERO 0b00111111
+#define U 0b00000110
+#define DOS 0b01011011
+#define TRES 0b01001111
+#define QUATRE 0b01100110
+#define CINC 0b01101101
+#define SIS 0b01111101
+#define SET 0b00000111
+#define VUIT 0b01111111
+#define NOU 0b01101111
+
+void main (){
+   int i;
+   int numeros[10] = {ZERO, U, DOS, TRES, QUATRE, CINC, SIS, SET, VUIT, NOU};  
+   set_tris_b(0x00);
+   while(1){
+      for(i=0; i<=9; i++){
+         output_b(numeros[i]);
+      }
+   }
+}
